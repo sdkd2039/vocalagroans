@@ -625,6 +625,7 @@
 async function fetchAllSheetsData() {
         try {
             // جلب البيانات وعكسها مباشرة ليكون الترتيب من الأحدث للأقدم
+            // تم إزالة .slice(1) لضمان عدم تخطي أول ملف صوتي في الجدول
             categoriesData['آهات'] = (await fetchSheetData('آهات')).reverse();
             categoriesData['مؤثرات'] = (await fetchSheetData('مؤثرات')).reverse();
             categoriesData['انتقالات'] = (await fetchSheetData('انتقالات')).reverse();
@@ -643,10 +644,9 @@ async function fetchAllSheetsData() {
             pool.forEach(item => uniquePoolMap.set(item.url, item));
             let uniquePool = Array.from(uniquePoolMap.values());
 
-            let shuffled = [...uniquePool].sort(() => 0.5 - Math.random());
+            // أخذ أول 6 عناصر (وهي الأحدث بعد العكس) لقسم "الكل" بشكل ثابت
             randomAllAudio = uniquePool.slice(0, 6);
 
-            updateFavBadge(); // تحديث شارة العداد عند تشغيل المتصفح للمرة الأولى
             renderAudioCards();
         } catch (err) {
             document.getElementById('statusMessage').innerHTML = 'حدث خطأ أثناء تحميل الملفات الصوتية.';
