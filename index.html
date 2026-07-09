@@ -650,24 +650,34 @@
         renderAudioCards();
     }
 
-    function toggleFavorite(id) {
+function toggleFavorite(id) {
+        // 1. التحقق إذا كان العنصر موجوداً بالفعل أم لا
         if (favoritesList.includes(id)) {
             favoritesList = favoritesList.filter(favId => favId !== id);
         } else {
             favoritesList.push(id);
         }
+        
+        // 2. حفظ المصفوفة المحدثة في التخزين المحلي
         localStorage.setItem('vocal_favs_v2', JSON.stringify(favoritesList));
+        
+        // 3. تحديث العداد (الرقم الأحمر) في التبويب فوراً
         updateFavBadge();
         
-        // بدلاً من إعادة بناء الصفحة كاملة، نقوم بتحديث شكل الزر فقط فوراً لجعل الضغط سريع جداً
+        // 4. تحديث شكل الزر بشكل سريع في الواجهة
         const favBtn = document.querySelector(`[data-fav-id="${id}"]`);
         if (favBtn) {
             const isFav = favoritesList.includes(id);
             favBtn.classList.toggle('is-fav', isFav);
-            favBtn.innerHTML = `<i class="${isFav ? 'fa-solid' : 'fa-regular'} fa-heart"></i>`;
+            
+            // تحديث الأيقونة لتصبح ممتلئة أو فارغة
+            const iconEl = favBtn.querySelector('i');
+            if (iconEl) {
+                iconEl.className = isFav ? 'fa-solid fa-heart' : 'fa-regular fa-heart';
+            }
         }
         
-        // إذا كنا داخل تبويب المفضلة، نحتاج لإعادة بناء الكروت لإزالة العنصر المحذوف
+        // 5. إذا كان المستخدم واقفاً في تبويب المفضلة، نعيد بناء الكروت لإزالة العناصر المحذوفة
         if (currentTab === 'favorites') {
             renderAudioCards();
         }
