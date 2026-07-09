@@ -577,7 +577,6 @@
     let currentTab = 'all'; 
     let favoritesList = JSON.parse(localStorage.getItem('vocal_favs_v2')) || [];
 
-    // دالة لتوليد ID ثابت وموحد معتمد على الرابط فقط لحل مشكلة اختفاء المفضلة
     function generateCleanId(url) {
         return 'audio-' + url.replace(/[^a-zA-Z0-9]/g, '').substr(-15);
     }
@@ -650,40 +649,33 @@
         renderAudioCards();
     }
 
-function toggleFavorite(id) {
-        // 1. التحقق إذا كان العنصر موجوداً بالفعل أم لا
+    function toggleFavorite(id) {
         if (favoritesList.includes(id)) {
             favoritesList = favoritesList.filter(favId => favId !== id);
         } else {
             favoritesList.push(id);
         }
         
-        // 2. حفظ المصفوفة المحدثة في التخزين المحلي
         localStorage.setItem('vocal_favs_v2', JSON.stringify(favoritesList));
-        
-        // 3. تحديث العداد (الرقم الأحمر) في التبويب فوراً
         updateFavBadge();
         
-        // 4. تحديث شكل الزر بشكل سريع في الواجهة
         const favBtn = document.querySelector(`[data-fav-id="${id}"]`);
         if (favBtn) {
             const isFav = favoritesList.includes(id);
             favBtn.classList.toggle('is-fav', isFav);
             
-            // تحديث الأيقونة لتصبح ممتلئة أو فارغة
             const iconEl = favBtn.querySelector('i');
             if (iconEl) {
                 iconEl.className = isFav ? 'fa-solid fa-heart' : 'fa-regular fa-heart';
             }
         }
         
-        // 5. إذا كان المستخدم واقفاً في تبويب المفضلة، نعيد بناء الكروت لإزالة العناصر المحذوفة
         if (currentTab === 'favorites') {
             renderAudioCards();
         }
     }
 
-function renderAudioCards() {
+    function renderAudioCards() {
         const container = document.getElementById('audioContainer');
         container.innerHTML = '';
         const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
@@ -725,7 +717,6 @@ function renderAudioCards() {
             const isFav = favoritesList.includes(item.id) ? 'is-fav' : '';
             const favIcon = favoritesList.includes(item.id) ? 'fa-solid fa-heart' : 'fa-regular fa-heart';
             
-            // تحقق إذا كان هذا الصوت يعمل حالياً في الخلفية لتغيير أيقونة التشغيل تلقائياً
             const isPlayingNow = activePlayers[item.id] && !activePlayers[item.id].audio.paused;
             const playIconClass = isPlayingNow ? 'fa-solid fa-pause' : 'fa-solid fa-play';
 
@@ -788,20 +779,11 @@ function renderAudioCards() {
 
         container.appendChild(fragment);
 
-        // إعادة ربط الأحداث وتحديث أشرطة التقدم فوراً للأصوات التي لا تزال تعمل
         Object.keys(activePlayers).forEach(id => {
             if (document.getElementById(`progress-${id}`)) {
                 setupAudioEvents(id);
             }
         });
-    }
-            
-            // إصلاح البطء القاتل: نربط الأحداث فقط للمشغل الفيدرالي الشغال حالياً لمنع تحميل الصوت لجميع الكروت في الخلفية بشكل متكرر
-if (activePlayers[item.id]) {
-    setupAudioEvents(item.id);
-}
-
-        container.appendChild(fragment);
     }
 
     function setupAudioEvents(id) {
@@ -839,7 +821,7 @@ if (activePlayers[item.id]) {
         };
     }
 
-function togglePlay(id, url) {
+    function togglePlay(id, url) {
         const icon = document.getElementById(`icon-${id}`);
         
         if (!activePlayers[id]) {
@@ -849,7 +831,6 @@ function togglePlay(id, url) {
 
         const audio = activePlayers[id].audio;
 
-        // إيقاف أي صوت آخر يعمل الآن وتنظيف الواجهة الخاصة به لمنع استهلاك الذاكرة
         Object.keys(activePlayers).forEach(key => {
             if (key !== id && !activePlayers[key].audio.paused) {
                 activePlayers[key].audio.pause();
