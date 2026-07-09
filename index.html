@@ -597,13 +597,15 @@
         }
     }
 
-    async function fetchSheetData(sheetName) {
+async function fetchSheetData(sheetName) {
         try {
             const queryUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?sheet=${encodeURIComponent(sheetName)}&tqx=out:json&headers=0&cacheBust=${Date.now()}`;
             const res = await fetch(queryUrl);
             const text = await res.text();
             const json = JSON.parse(text.substr(47).slice(0, -2));
-            const rows = json.table.rows.slice(1);
+            
+            // تم تعديلها هنا لتقرأ من أول صف مباشرة دون حذف الصف الأول
+            const rows = json.table.rows; 
 
             return rows.map((row, idx) => {
                 const title = row.c[0] ? row.c[0].v : 'بدون عنوان'; 
@@ -622,10 +624,8 @@
         }
     }
 
-async function fetchAllSheetsData() {
+    async function fetchAllSheetsData() {
         try {
-            // جلب البيانات وعكسها مباشرة ليكون الترتيب من الأحدث للأقدم
-            // تم إزالة .slice(1) لضمان عدم تخطي أول ملف صوتي في الجدول
             categoriesData['آهات'] = (await fetchSheetData('آهات')).reverse();
             categoriesData['مؤثرات'] = (await fetchSheetData('مؤثرات')).reverse();
             categoriesData['انتقالات'] = (await fetchSheetData('انتقالات')).reverse();
@@ -644,8 +644,8 @@ async function fetchAllSheetsData() {
             pool.forEach(item => uniquePoolMap.set(item.url, item));
             let uniquePool = Array.from(uniquePoolMap.values());
 
-            // أخذ أول 6 عناصر (وهي الأحدث بعد العكس) لقسم "الكل" بشكل ثابت
-            randomAllAudio = uniquePool.slice(0, 6);
+            // تعديل عشوائي بحت: خلط كل العناصر بالكامل وعرضها بشكل عشوائي في قسم "الكل"
+            randomAllAudio = uniquePool.sort(() => Math.random() - 0.5);
 
             renderAudioCards();
         } catch (err) {
