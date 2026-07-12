@@ -529,7 +529,7 @@
     </div>
 
     <div class="tabs-container">
-        <button class="tab-btn active" onclick="switchTab('all', this)"><i class="fa-solid fa-wand-magic-sparkles"></i> اقتراحات لك</button>
+        <button class="tab-btn active" onclick="switchTab('all', this)"><i class="fa-solid fa-bolt"></i> اقتراحات لك</button>
         <button class="tab-btn" onclick="switchTab('آهات', this)"><i class="fa-solid fa-music"></i> آهات</button>
         <button class="tab-btn" onclick="switchTab('مؤثرات', this)"><i class="fa-solid fa-wand-magic-sparkles"></i> مؤثرات</button>
         <button class="tab-btn" onclick="switchTab('انتقالات', this)"><i class="fa-solid fa-arrow-right-arrow-left"></i> انتقالات</button>
@@ -553,7 +553,7 @@
 <footer class="footer">
     <div class="footer-rights">
         جميع الحقوق محفوظة ©<br>
-        1448 هـ - 2026 م
+        1448 هـ - 2026 م[cite: 1]
     </div>
     <div class="footer-socials">
         <a href="https://t.me/VocalAGroans" target="_blank" class="social-link tg">
@@ -632,7 +632,6 @@
             pool.forEach(item => uniquePoolMap.set(item.url, item));
             let uniquePool = Array.from(uniquePoolMap.values());
 
-            // خلط كامل البيانات واختيار 6 عناصر عشوائية فقط للقسم الافتراضي
             let shuffledPool = uniquePool.sort(() => Math.random() - 0.5);
             randomAllAudio = shuffledPool.slice(0, 6);
 
@@ -649,7 +648,6 @@
         document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
         buttonEl.classList.add('active');
 
-        // إذا ضغط المستخدم على تبويب الاقتراحات مجدداً، يتم تحديث الخوارزمية واختيار 6 مقاطع عشوائية جديدة
         if (tabName === 'all') {
             let pool = [
                 ...categoriesData['آهات'],
